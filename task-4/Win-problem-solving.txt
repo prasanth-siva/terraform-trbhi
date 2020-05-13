@@ -1,0 +1,13 @@
+● A short description of your troubleshooting process.
+	- Tried to identify where the issue is from either system or from server by reloading or refreshing the page 
+	- Tried reconnecting the network to understand the issue.
+	- Checked whether the Internet Information Services is installed or not in control panel -> "Turn Windows Features on or off"  
+	- Checked whether the default destination application pool is in start or stop in "Administrative Tools" -> "IIS" -> worker processes
+● Tell us what's wrong
+	- The Worker Process was not started 
+	- The default application pool was not started 
+	- The Process Model -> Identity was not set to ApplicationPoolIdentity
+● Explain what you did to fix it
+	- Started the Worker Process 
+	- Under the worker process started the default application pool 
+	- Changed the Process Model -> Identity to ApplicationPoolIdentity
