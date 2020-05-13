@@ -1,0 +1,15 @@
+● A short description of your troubleshooting process.
+	- used the redis-cli ping command and  ps auxw| grep redis-ser command to verify whether the redis-server is running or not
+	- tried to start the redis-server with the command systemctl status redis-server.service
+	- looked at the error in the systemctl status redis-server.service and journalctl.exe
+	- Tried to start the manually using redis-server and /usr/bin/redis-server /etc/redis/redis.conf
+		- sucessfully able to start the server manually
+	- Changed the permissions of log file and /var/log/redis/redis-server.log and started the service again but failed
+	- validated the /etc/systemd/system/redis.service and confirmed the systemctl is enabled
+	- validated the /etc/redis/redis.conf
+	- compared the /etc/systemd/system/redis.service and /etc/redis/redis.conf and found the issue
+● Tell us what's wrong
+	- The ReadWriteDirectories in /etc/systemd/system/redis.service is pointed towards -/var/log/redis but the log file in /etc/redis/redis.conf is pointed to /var/log/redis-server.log
+● Explain what you did to fix it
+	- Modified the /etc/redis/redis.conf file and changed the logging file to /var/log/redis/redis-server.log
+
