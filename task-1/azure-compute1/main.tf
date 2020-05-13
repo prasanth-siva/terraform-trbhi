@@ -7,6 +7,10 @@ data "azurerm_resource_group" "vm" {
   name = var.resource_group_name
 }
 
+data "template_file" "cloudconfig" {
+  template = "${file("${path.module}/monitoring.tpl")}"
+}
+
 resource "azurerm_virtual_machine" "vm-linux" {
   count				= var.instances
   name                          = "${var.vm_environment}-vmLinux-${count.index}"

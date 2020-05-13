@@ -11,6 +11,20 @@ provider "azurerm" {
 # }
 #}
 
+data "template_file" "cloudconfig" {
+  template = "${file("${var.cloudconfig_file}")}"
+}
+
+data "template_cloudinit_config" "config" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.cloudconfig.rendered}"
+  }
+}
+
 resource "azurerm_resource_group" "vm" {
   name     = "${var.environment}-vm"
   location = "East US"
@@ -27,6 +41,7 @@ module "network" {
 module "linuxservers" {
   source              = "./azure-compute1"
   resource_group_name = azurerm_resource_group.vm.name
+  cloudconfig_file    = "${path.module}/monitoring.tpl"
   vm_os_simple        = "UbuntuServer"
   public_ip_dns       = ["ubuntuserver"] 
   vm_size	      = var.staging["ubuntu"]
