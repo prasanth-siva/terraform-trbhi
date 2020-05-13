@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  become_user: root
+  tasks:
+   - name: Image Pull
+     shell: docker pull docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+     register: image_pull
+
+   - debug:
+       var: image_pull.stdout_lines
+     
+   - name: Container_stop 
+     shell: docker rm -f elasticsearch
+     ignore_errors: True
+ 
+   - name: Get_hostname
+     shell: hostname 
+     register: elastic_host  
+     
+   - debug: var=elastic_host.stdout
+
+   - name: Container start
+     shell: docker run -d -v /home/root:/usr/share/elasticsearch/downloads -it --network host --name elasticsearch -e "cluster.name=LiferayElasticsearchCluster" -e "discovery.type=single-node" -e "node.name={{ elastic_host.stdout }}" -e "network.host={{ elastic_host.stdout }}" -p 9200:9200 -p 9300:9300 docker.elastic.co/elasticsearch/elasticsearch:7.6.2; sleep 60
+
+   - name: Container_restart
+     shell: docker restart elasticsearch;sleep 60
+     
+   - name: Health_Check_ES
+     shell: curl -I http://{{ elastic_host.stdout }}:9200
+     register: health_check_es
+     
+   - debug: var=health_check_es.stdout_lines
